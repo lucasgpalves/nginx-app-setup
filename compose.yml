@@ -1,0 +1,36 @@
+services:
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data/redis
+
+  api:
+    build: 
+      dockerfile: ./app/app.dockerfile
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - PORT=${PORT}
+    volumes:
+      - ./app:/app
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:2.19.0
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/index.html:/usr/share/nginx/html/index.html:ro
+    depends_on:
+      - api
+
+volumes:
+  redis_data:
