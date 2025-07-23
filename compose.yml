@@ -23,7 +23,7 @@ services:
       - redis
 
   nginx:
-    image: nginx:2.19.0
+    image: nginx:1.29.0
     ports:
       - "80:80"
     volumes:
